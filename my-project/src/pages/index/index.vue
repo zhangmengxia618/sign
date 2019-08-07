@@ -12,7 +12,7 @@
         <cover-view class="location" @click="location">
             ◎
         </cover-view>
-        <navigator url="/pages/site/main"> <span class="qDl">→</span></navigator>
+        <navigator url="/pages/personage/main"> <span class="qDl">→</span></navigator>
         <navigator url="/pages/addText/main">  
            <div class="add">添加面试</div>
         </navigator>

@@ -1,6 +1,8 @@
 {
   "pages": [
     "pages/index/main",
+    "pages/personage/main",
+    "pages/interList/main",
     "pages/addText/main",
     "pages/site/main",
     "pages/selectSite/main"
