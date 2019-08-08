@@ -5,3 +5,10 @@ import fly from "../utils/request";
 export let login = code=>{
     return fly.post('/user/code2session', {code});
 }
+
+
+
+// 解密数据
+export let decrypt = params=>{
+    return request.post('/user/decrypt', params)
+}

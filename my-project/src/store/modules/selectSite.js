@@ -29,7 +29,6 @@ const mutations = {
 
   valD(state, payload) {
     state.valueData = payload;
-    console.log(payload);
   }
 };
 

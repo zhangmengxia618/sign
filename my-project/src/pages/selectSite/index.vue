@@ -1,9 +1,9 @@
 <template>
   <div>
-    <form action>
+    <form>
       <label for>
         <span>北京</span>
-        <input type="text" placeholder="北京市海淀区上地软件园南路57号" v-model="val" @input="s" />
+        <input type="text" placeholder="北京市海淀区上地软件园南路57号" v-model="val" @input="search" />
       </label>
     </form>
     <div class="cen">
@@ -19,6 +19,7 @@
 </template>
 <script>
 import { mapState, mapActions, mapMutations } from "vuex";
+import {debounce} from "@/utils/debounce"
 export default {
   props: {},
   components: {},
@@ -32,6 +33,9 @@ export default {
       siteData: state => state.selectSite.siteData
     })
   },
+  mounted() {
+    this.getSuggestion = debounce(this.getSuggestion, 2000);
+  },
   methods: {
     ...mapActions({
       getSuggestion: "selectSite/getSuggestion"
@@ -40,8 +44,8 @@ export default {
     ...mapMutations({
       valD: "selectSite/valD"
     }),
-    //出发input事件
-    s() {
+    //触发input事件
+    search() {
       this.getSuggestion(this.val);
     },
 
@@ -50,10 +54,10 @@ export default {
         delta: 1
       });
       this.valD(value);
-    }
+    },
+
   },
-  created() {},
-  mounted() {}
+  created() {}
 };
 </script>
 <style scoped lang="scss">

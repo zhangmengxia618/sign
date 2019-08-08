@@ -1,7 +1,7 @@
 <template>
-  <div class="addtext-warp">
+ <form @submit="submit" report-submit  class="addtext-warp">
     <h3>面试信息</h3>
-    <form action>
+   
       <label for>
         <span>公司名称</span>
         <input type="text" placeholder="请输入公司名称" v-model="name" />
@@ -12,73 +12,146 @@
       </label>
       <label for>
         <span>面试时间</span>
-        <picker mode="date" start="2019-01-01" end="2020-12-01" @change="bindDateChange">
-          <view class="picker">{{date}}</view>
+         <picker
+          mode="multiSelector"
+          :range="dateRange"
+          :value="info.date"
+          @change="dateChange"
+          @columnchange="columnChange"
+        ><view class="date">{{dateShow}}</view>
         </picker>
         <i class="icon" @click="icon">！</i>
       </label>
       <label for>
         <span>面试地址</span>
-        <input type="text" placeholder="请选择面试地址" @focus="navig" :value="valueData" />
+        <input type="text" placeholder="请选择面试地址" @click="navig" :value="valueData" />
       </label>
-    </form>
+  
     <h3>备注信息</h3>
-    <textarea name id cols="100" rows="0">备注信息(可选，100字以内)</textarea>
+    <textarea name id cols="100" rows="0" v-model="text"></textarea>
     <!-- <navigator url="/pages/site/main"> -->
-    <button @click="btnD">确认</button>
+    <button form-type="submit">确认</button>
     <!-- </navigator> -->
-  </div>
+
+    </form>
 </template>
 
 <script>
 import { mapState, mapActions, mapMutations } from "vuex";
+const moment = require('moment');
+const range = [
+  [0,1,2,3,4,5,6,7,8,9],
+  [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23],
+  ['00分','10分','20分','30分','40分','50分']
+];
 export default {
   props: {},
   components: {},
   data() {
     return {
-      date: "2016-09-01",
+      // date: "2016-09-01",
       name: "",
-      tel: ""
+      tel: "",
+      text: "",
+      info: {
+        date: [0,0,0],
+      }
     };
   },
   computed: {
     ...mapState({
-      valueData: state => state.selectSite.valueData
-    })
+      valueData: state => state.selectSite.valueData,
+      longitude: state => state.home.longitude,
+      latitude: state => state.home.latitude
+    }),
+     // 处理面试日期
+    dateRange(){
+      let dateRange = [...range];
+      // 如果时间是今天，过滤掉现在之前的小时
+      if (!this.info.date[0]){
+        dateRange[1] = dateRange[1].filter(item=>{
+          return item>moment().hour();
+        })
+      }else{
+        dateRange[1] = range[1]
+      }
+      // 格式化小时
+      dateRange[1] = dateRange[1].map(item=>{
+        return item+'点'
+      })
+      // 计算当前日期之后的十天
+      dateRange[0] = dateRange[0].map(item=>{
+        return moment().add(item, 'days').date()+'号'
+      })
+      return dateRange;
+    },
+    // 显示的日期
+    dateShow(){
+      return moment()
+      .add(moment().hour()==23?this.info.date[0]-1:this.info.date[0], 'd')
+      .add(this.info.date[1]+1, 'h')
+      .minute(this.info.date[2]*10)
+      .format('YYYY-MM-DD HH:mm');
+    }
   },
   methods: {
     bindDateChange: function(e) {
-      console.log("picker发送选择改变，携带值为", e.mp.detail.value);
       this.date = e.mp.detail.value;
     },
-    ...mapMutations({
-      btn: "addText/btn"
+     ...mapActions({
+      getLocation: "addText/getLocation"
     }),
-    btnD() {
-      this.btn(this.name, this.date, this.tel, this.valueData);
+    // ...mapMutations({
+    //   btn: "addText/btn"
+    // }),
+    submit(e) {
+      this.getLocation({
+         company: this.name,
+        phone: this.tel,
+        address: this.valueData,
+        latitude: this.latitude*1,
+        longitude: this.longitude*1,
+        start_time: moment(this.dateShow).unix()*1000,
+        description: this.text,
+        form_id:e.target.formId
+      })
       if (this.name == "" || this.tel == "") {
         wx.showToast({
           title: "请输入公司名称",
           icon: "none",
           duration: 2000
         });
-      } else {
-        wx.showModal({
-          title: "温馨提示",
-          content: "添加面试成功",
-          success(res) {
-            if (res.confirm) {
-              console.log("用户点击确定");
-              wx.navigateTo({
-                url: "/pages/interList/main"
-              });
-            } else if (res.cancel) {
-              console.log("用户点击取消");
-            }
-          }
+      } else if (!/^1[3456789]\d{9}$/.test(this.tel)) {
+        wx.showToast({
+          title: "请输入正确的手机号",
+          icon: "none",
+          duration: 2000
         });
+      } else {
+        console.log(12)
+        // wx.showModal({
+        //   title: "温馨提示",
+        //   content: "添加面试成功",
+        //   success(res) {
+        //     if (res.confirm) {
+        //       console.log("用户点击确定");
+        //       wx.navigateTo({
+        //         url: "/pages/interList/main"
+        //       });
+        //     } else if (res.cancel) {
+        //       console.log("用户点击取消");
+        //     }
+        //   }
+        // });
       }
+    },
+
+     // 监听多列选择器每列变化
+    columnChange(e){
+      let {column, value} = e.target;
+      let date = [...this.info.date];
+      date[column] = value;
+      this.info.date = date;
     },
     navig() {
       wx.navigateTo({
@@ -109,7 +182,7 @@ export default {
     line-height: 80rpx;
     padding-left: 20rpx;
   }
-  form {
+
     label {
       width: 100%;
       padding: 35rpx;
@@ -118,7 +191,13 @@ export default {
       border-bottom: 1px solid rgb(246, 246, 246);
       color: rgb(102, 102, 102);
       span {
-        margin-right: 50rpx;
+        width: 30%;
+        display: inline-block;
+      }
+      .date{
+        width: 139%;
+        margin-left: 54rpx;
+
       }
       .icon {
         width: 50rpx;
@@ -150,6 +229,6 @@ export default {
     border-radius: 0;
     color: #fff;
   }
-}
+
 </style>
 

@@ -37,7 +37,6 @@ export default {
         ...mapState({
               longitude: state=>state.home.longitude,
               latitude: state=>state.home.latitude,
-            
         })
     },
     methods:{
