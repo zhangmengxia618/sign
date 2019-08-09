@@ -1,4 +1,4 @@
-import {sign} from "@/service/sign"
+import {sign,signList} from "@/service/sign"
 //模块所有状态
 const state={
    addData:[]
@@ -6,16 +6,21 @@ const state={
 //莫快男同步改变
 const mutations={
     updateSign(state,payload){
+        console.log(payload,'res++payload+++++')
+        // payload.map((item,index)=>{
+        //     item.address=JSON.parse(item.address)
+        //     item.start_time = new Date(Number(item.start_time)).toLocaleString();
+        // })
         state.addData=payload;
     }
 }
 
 //模块异步不改变
 const actions = {
+    //添加面試
     async getLocation({commit},payload){
         const res = await sign(payload);
-        console.log(res,'res+++++++++++')
-        commit("updateSign",res.data);
+        // commit("updateSign",payload);
         if(res.code===0){
             wx.showModal({
                 title: "温馨提示",
@@ -32,6 +37,14 @@ const actions = {
                 }
               });
         }
+    },
+
+    //获取面试列表接口
+    async getLocaList({commit},payload){
+        const res = await signList(payload);''
+        console.log(res.data,'res+++++++++++')
+        commit("updateSign",res.data);
+
     },
 
 }
