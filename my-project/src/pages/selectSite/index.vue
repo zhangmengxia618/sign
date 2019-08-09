@@ -40,6 +40,7 @@ export default {
     ...mapActions({
       getSuggestion: "selectSite/getSuggestion"
     }),
+    
     //点击每一项
     ...mapMutations({
       valD: "selectSite/valD"

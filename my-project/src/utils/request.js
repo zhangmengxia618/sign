@@ -12,6 +12,7 @@ fly.config.baseURL="https://sign.jasonandjay.com"
 fly.interceptors.request.use((request)=>{
 
     let openid = wx.getStorageSync('openid');
+    console.log(openid,"openid1111111111111111")
     if (openid){
       request.headers['openid'] = openid;
     }

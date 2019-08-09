@@ -15,10 +15,11 @@ export default {
     console.log('openid.....',openid)
     // 调用登陆接口
     wx.login({
-      success: async (res)=>{ u
+      success: async (res)=>{ 
         if (res.code) {
           //发起网络请求
           let data = await login(res.code);
+          console.log(data,"res")
           wx.setStorageSync('openid', data.data.openid);
           // console.log('res...', data);
         } else {

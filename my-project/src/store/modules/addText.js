@@ -7,10 +7,12 @@ const state={
 const mutations={
     updateSign(state,payload){
         console.log(payload,'res++payload+++++')
-        // payload.map((item,index)=>{
-        //     item.address=JSON.parse(item.address)
-        //     item.start_time = new Date(Number(item.start_time)).toLocaleString();
-        // })
+        payload.forEach((item,index)=>{
+          if(item.address.includes("{")){
+              item.address=JSON.parse(item.address).address;
+          }
+            item.start_time = new Date(Number(item.start_time)).toLocaleString();
+        })
         state.addData=payload;
     }
 }
@@ -41,7 +43,16 @@ const actions = {
 
     //获取面试列表接口
     async getLocaList({commit},payload){
-        const res = await signList(payload);''
+        let res;
+        if(payload.status===2){
+         res=await signList({
+            page:1,
+            pageSize:10
+          });
+        }else{
+          res = await signList(payload);
+        }
+         
         console.log(res.data,'res+++++++++++')
         commit("updateSign",res.data);
 

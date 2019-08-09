@@ -1,4 +1,4 @@
-import {decrypt} from '@/service/user';
+import {decrypt,updatePhone} from '@/service';
 
 const state = {
   phone: ''
@@ -6,22 +6,23 @@ const state = {
 
 const mutations = {
   updateState(state, payload){
-    for (let key in payload){
-      state[key] = payload[key]+''
-    }
+    console.log(payload,'123payload+++++++++++++')
+    state.phone=payload;
   }
 }
-
-
 const actions = {
   async getPhoneNumber({commit}, payload){
-    return new Promise(async (resolve, reject)=>{
+    console.log("payload....",payload);
       let data = await decrypt(payload);
-      commit('updateState', {phone: data.data.phoneNumber});
-      resolve(data);
-    })
+      console.log(data,'data')
+     
+      if(data.code===0){
+          let updatePhonea=await updatePhone({phone:data.data.phoneNumber*1})
+          commit('updateState',data.data.phoneNumber);
+      }
   }
 }
+
 
 
 export default {

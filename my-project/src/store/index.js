@@ -4,13 +4,17 @@ import Vuex from  "vuex"
 import home from "./modules/index";
 import addText from "./modules/addText"
 import selectSite from "./modules/selectSite"
+import user from "./modules/user"
+import site from "./modules/site"
 Vue.use(Vuex)
 
 export default  new Vuex.Store({
     modules:{
        home,
        addText,
-       selectSite
+       selectSite,
+       user,
+       site
     },
     plugins:[]
 })
