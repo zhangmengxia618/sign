@@ -14,6 +14,7 @@ const mutations={
             item.start_time = new Date(Number(item.start_time)).toLocaleString();
         })
         state.addData=payload;
+        console.log(state.addData,"addData++++++++++++")
     }
 }
 

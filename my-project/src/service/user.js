@@ -17,7 +17,7 @@ export let updatePhone = code => {
   return fly.post("/user/updatePhone", code);
 };
 
-//获取面试详情
+//获取面试列表
 export let signDetail = code => {
   return fly.get(`/sign/${code}`);
 };

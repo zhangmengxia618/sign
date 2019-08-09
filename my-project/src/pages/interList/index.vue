@@ -35,6 +35,7 @@
 </template>
 <script>
 import { mapState, mapActions, mapMutations } from "vuex";
+const moment = require("moment");
 export default {
   props: {},
   components: {},
@@ -58,7 +59,6 @@ export default {
           status: 2
         }
       ],
-      tabContents: ["内容一", "内容二", "内容三", "内容4"],
       num: 0
     };
   },
@@ -111,19 +111,50 @@ export default {
       });
     }
   },
+  onReachBottom() {
+    let page=1;
+    var that = this;
+
+    wx.showLoading({
+      title: "玩命加载中"
+    });
+    page=page+1;
+    
+    wx.request({
+      url: 'https://sign.jasonandjay.com/sign?page=' + page,
+      method: "GET",
+      // 请求头部
+      header: {
+        'content-type': 'application/text'
+      },
+      success: function (res) {
+        console.log(res,'res++',page)
+        console.log(res.data.data,'res.data')
+        console.log(that.addData,'this.addData')
+        that.addData=that.addData.concat(res.data.data)
+        console.log(that.addData,'(res.data.data)++++++++++')
+that.getLocaList({ page: page});
+        // 隐藏加载框
+        wx.hideLoading();
+      }
+    })
+    console.log("触底了")
+  },
   created() {},
   mounted() {
     this.getLocaList({ status: -1 });
+    wx.startPullDownRefresh();
   }
 };
 </script>
 <style scoped lang="scss">
 .inter {
   width: 100%;
-  height: 100%;
+  // height: 100%;
   background: #ccc;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
   ul {
     width: 100%;
     height: 80rpx;
@@ -144,7 +175,7 @@ export default {
     width: 100%;
     height: 100%;
     background: #fff;
-    overflow: scroll;
+    overflow: hidden;
     flex: 1;
     .cenZ {
       width: 100%;
