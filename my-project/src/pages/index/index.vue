@@ -12,7 +12,9 @@
     <cover-view class="location" @click="location">
       <cover-image src="../../images/location.png" />
     </cover-view>
-    
+    <cover-view class="person" @click="person">
+      <button>我的</button>
+    </cover-view>
     <button @click="addInterview" class="addInterview">添加面试</button>
   </div>
 </template>
@@ -23,7 +25,7 @@ export default {
   data() {
     return {
       markers: []
-    }
+    };
   },
 
   computed: {
@@ -35,12 +37,15 @@ export default {
 
   methods: {
     ...mapActions({
-      location: "home/getLocation"
+       location: "home/getLocation"
     }),
     addInterview() {
       wx.navigateTo({
         url: "/pages/addinterview/main"
       });
+    },
+    person() {
+      wx.navigateTo({url:"/pages/personalCenter/main"})
     }
   },
 
@@ -70,12 +75,16 @@ map {
   border-radius: 0;
 }
 .location {
-  width: 100rpx;
+  width: 80rpx;
   position: fixed;
   left: 60rpx;
   bottom: 100rpx;
 }
-.location{
+.person {
+  width: 80rpx;
+  position: fixed;
+  right: 60rpx;
+  bottom: 100rpx;
 
 }
 </style>

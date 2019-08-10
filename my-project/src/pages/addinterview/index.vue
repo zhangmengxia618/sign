@@ -38,23 +38,47 @@
 import { mapState, mapActions } from "vuex";
 const moment = require("moment");
 const range = [
-  [0,1,2,3,4,5,6,7,8,9],
-  [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23],
-  ['00分','10分','20分','30分','40分','50分']
+  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23
+  ],
+  ["00分", "10分", "20分", "30分", "40分", "50分"]
 ];
 export default {
   name: "",
   data() {
     return {
       form_id: "",
-      address: "",
+      // address: "",
       company: "",
       phone: "",
       description: "",
       latitude: 0,
       longitude: 0,
       start_time: 0,
-
       info: {
         date: [0, 0, 0]
       }
@@ -73,7 +97,6 @@ export default {
     chooseAdd() {
       wx.navigateTo({ url: "/pages/chooseAdd/main" });
     },
-    // 监听多列选择器每列变化
     columnChange(e) {
       let { column, value } = e.target;
       let date = [...this.info.date];
@@ -127,19 +150,38 @@ export default {
         company: this.company,
         phone: this.phone,
         form_id: this.form_id,
-        address: this.add.address,
+        address: JSON.stringify({ address: this.add.address }),
         latitude: this.add.location.lat,
         longitude: this.add.location.lng,
         start_time: this.start_time,
         description: this.description
       });
-      console.log("返回", res);
       this.submiting = false;
-      if(res.code===0){
-        console.log(9)
+      if (res.code === 0) {
+        wx.showModal({
+          title: "温馨提示",
+          content: res.msg,
+          showCancel: false,
+          confirmText: "确定",
+          confirmColor: "#197Dbf",
+          success: res => {
+            if (res.confirm) {
+              this.phone = "";
+              this.form_id = "";
+              this.description = "";
+              this.company = "";
+            }
+            wx.navigateTo({ url: "/pages/interviewList/main" });
+          }
+        });
+      } else {
       }
     }
-    },
+  },
+  computed: {
+    ...mapState({
+      add: state => state.chooseAddress.addinfo
+    }),
     dateRange() {
       let dateRange = [...range];
       // 如果时间是今天，过滤掉现在之前的小时
@@ -194,7 +236,7 @@ export default {
         .minute(this.info.date[2] * 10)
         .format("YYYY-MM-DD HH:mm");
     }
-  
+  }
 };
 </script>
 <style scoped>

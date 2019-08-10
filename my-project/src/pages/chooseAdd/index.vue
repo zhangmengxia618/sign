@@ -54,9 +54,7 @@ export default {
     },
     chooseAdd(item){
       this.chooseadd(item);
-      wx.navigateBack({
-        delta: 1
-      })
+      wx.navigateBack()
     }
   },
   computed: {

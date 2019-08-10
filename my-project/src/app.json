@@ -3,7 +3,8 @@
     "pages/index/main",
     "pages/addinterview/main",
     "pages/chooseAdd/main",
-    "pages/interviewList/main"
+    "pages/interviewList/main",
+    "pages/personalCenter/main"
   ],
   "window": {
     "backgroundTextStyle": "light",

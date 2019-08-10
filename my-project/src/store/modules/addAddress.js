@@ -10,10 +10,10 @@ const mutations = {
 
 const actions = {
   async addAddress({ commit }, payload) {
-    return async (resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       const res = await addAddress(payload)
-      // resolve(res)
-    }
+      resolve(res)
+    })
 
   }
 }

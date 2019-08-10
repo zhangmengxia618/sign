@@ -1,6 +1,12 @@
 <script>
 import {login} from '@/service'
+import { mapState, mapActions,mapMutations } from "vuex";
 export default {
+  methods:{
+     ...mapMutations({
+       openid:"user/openid"
+     })
+  },
   created() {
     // 调用API从本地缓存中获取数据
     /*
@@ -30,11 +36,11 @@ export default {
     success:async(res)=>{
       if(res.code){
         let data=await login(res.code);
-        // console.log(data)
+        console.log(data,'data')
         if(data.code===0){
-          
+           this.openid(data.data.openid)
         }
-        console.log(data)
+
       }else{
         console.log('登录失败')
       }
