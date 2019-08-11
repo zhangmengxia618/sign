@@ -7,7 +7,7 @@
       <p class="phone">{{phone}}</p>
     </header>
     <section>
-      <div class="s-item">
+      <div class="s-item" @click="myinterview">
         <icon type="waiting"></icon>
         <span class="myinterview">我的面试</span>
         <img src="../../images/arrow.svg" class="right" />
@@ -36,7 +36,6 @@ export default {
     return {
       flag: true,
       showSetting: false,
-      
     };
   },
   computed: {
@@ -60,6 +59,11 @@ export default {
       } else {
         this.showSetting = true;
       }
+    },
+    myinterview(){
+      wx.navigateTo({
+        url:'/pages/interviewList/main'
+      })
     }
   }
 };

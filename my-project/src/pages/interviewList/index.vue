@@ -1,39 +1,83 @@
 <template>
   <div class="wrap">
     <header>
-      <p v-for="(item,i) in headList" :class="i===ind?'active':''" :key="i"  @click="navitem(i)">{{item}}</p>
+      <p
+        v-for="(item,i) in headList"
+        :class="i===ind?'active':''"
+        :key="i"
+        @click="navitem(i)"
+      >{{item.txt}}</p>
     </header>
     <ul>
-      <li>
-          <div>
-            <p>北京八维研修学院</p>
-            <p>北京市海淀区</p>
-            <p>面试时间：2019:08:06</p>
-          </div>
-          <div>
-              
-          </div>
+      <li class="li" v-for="item in interviewList" :key="item.id" @click="getDetail(item.id)">
+        <div class="li-l">
+          <p class="tit">{{item.company}}</p>
+          <p class="address">{{item.address}}</p>
+          <p class="time">面试时间：{{item.start_time}}</p>
+        </div>
+        <div class="li-r">
+          <p class="nostart">未开始</p>
+          <p class="noremind">未提醒</p>
+        </div>
       </li>
     </ul>
   </div>
 </template>
 
 <script>
+import { mapState, mapActions } from "vuex";
+
 export default {
   name: "",
   components: {},
   data() {
     return {
-      headList: ["未开始", "已打卡", "已放弃", "全部"],
-      ind:0
+      headList: [
+        {
+          txt: "未开始",
+          status: -1
+        },
+        {
+          txt: "已打卡",
+          status: 0
+        },
+        {
+          txt: "已放弃",
+          status: 1
+        },
+        {
+          txt: "全部",
+          status: 2
+        }
+      ],
+      ind: 0
     };
   },
-  
+  computed: {
+    ...mapState({
+      interviewList: state => state.getInterviewList.interviewList
+    })
+  },
   methods: {
+    ...mapActions({
+      getIVList: "getInterviewList/getIVList"
+    }),
     navitem(ind) {
-      this.ind=ind
+      this.ind = ind;
+      if (ind == 3) {
+        this.getIVList();
+      } else {
+        // console.log(ind-1)
+        this.getIVList({ status: ind-1 });
+      }
+    },
+    getDetail(id){
+      wx.navigateTo('/pages/')
     }
-  }
+  },
+  // created() {
+  //   this.getIVList({ status: -1 });
+  // }
 };
 </script>
 
@@ -51,15 +95,59 @@ header {
   align-items: center;
   justify-content: space-around;
 }
-ul{
-  border-top:10rpx solid rgb(230, 230, 230);
-  flex:1;
+header p {
+  height: 100%;
+  line-height: 88rpx;
+  border-bottom: 6rpx solid #fff;
 }
-p{
-  border-bottom:5rpx solid #fff;
+ul {
+  border-top: 20rpx solid rgb(240, 240, 240);
+  flex: 1;
+  overflow: auto;
 }
-.active{
-  border-bottom: 5rpx solid rgb(70, 154, 209);
+
+header .active {
+  border-bottom: 6rpx solid rgb(70, 154, 209);
   color: rgb(70, 154, 209);
+}
+
+.li {
+  display: flex;
+  width: 100%;
+  height: 240rpx;
+  border-bottom: 1rpx solid #ccc;
+  justify-content: space-between;
+  padding: 30rpx;
+  box-sizing: border-box;
+}
+.li-l,
+.li-r {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.tit {
+  font-size: 42rpx;
+}
+.address {
+  color: rgb(148, 148, 148);
+}
+.time {
+  color: rgb(97, 97, 97);
+}
+
+.nostart {
+  padding: 10rpx;
+  background: rgb(244, 244, 244);
+  font-size: 30rpx;
+  color: rgb(160, 160, 160);
+  text-align: center;
+}
+.noremind {
+  padding: 10rpx;
+  background: rgb(254, 240, 240);
+  font-size: 36rpx;
+  color: rgb(254, 109, 109);
 }
 </style>
