@@ -3,35 +3,33 @@
     <form action>
       <label for>
         <span>面试地址</span>
-        <!-- <p>{{signDetailData.address}}</p> -->
-        <input type="text" placeholder="北京市海淀区上地软件园南路57号" :value="signDetailData.address" />
+        <p>{{signDetailData.address}}</p>
       </label>
       <label for>
         <span>面试时间</span>
-        <input type="text" placeholder="2019-08-06 17:00" :value="signDetailData.start_time" />
+        <p>{{signDetailData.start_time}}</p>
       </label>
       <label for>
         <span>联系方式</span>
-        <input type="text" placeholder="1156151561" :value="signDetailData.phone" />
+        <p @click="makePhone">{{signDetailData.phone}}</p>
       </label>
       <label for>
         <span>是否提醒</span>
-        <input type="text" placeholder="未提醒" v-model="remind" />
+        <p>{{signDetailData.remind?'未提醒':'已提醒'}}</p>
       </label>
       <label for>
         <span>面试状态</span>
-        <input type="text" placeholder="未开始" v-model="status" />
+        <p>{{status}}</p>
       </label>
       <label for>
         <span>取消提醒</span>
         <view class="body-view">
-          <switch @change="switch1Change" />
+          <switch @change="switch1Change" :checked="signDetailData.remind===0" />
         </view>
-        <!-- <input type="text" placeholder="请选择面试地址" /> -->
       </label>
     </form>
-    <div class="btn">
-      <button class="btn1">去打卡</button>
+    <div class="btn" v-if="signDetailData.status !==1">
+      <button class="btn1" @click="goSign">去打卡</button>
       <button class="btn2" @click="interview">放弃面试</button>
     </div>
   </div>
@@ -42,12 +40,15 @@ export default {
   props: {},
   components: {},
   data() {
-    return {};
+    return {
+      flag:true
+    };
   },
   computed: {
     ...mapState({
       signDetailData: state => state.site.signDetailData,
-      signP: state => state.site.signP
+      signP: state => state.site.signP,
+    
     }),
     remind() {
       if (this.signDetailData.remind === -1) {
@@ -66,24 +67,43 @@ export default {
       } else if (this.signDetailData.status === 1) {
         return "已放弃";
       }
-    },
+    }
   },
   methods: {
-     ...mapActions({
-       signP: "site/signP",
-     }),
-     //取消提醒
-     switch1Change(e){
-      console.log('switch1 发生 change 事件，携带值为', e.mp.detail.value)
-     if(e.mp.detail.value===true){
-         this.signP({id:this.signDetailData.id,remind:-1})
-     }else{
-         this.signP({id:this.signDetailData.id,remind:0})
-     }
+    ...mapActions({
+      signP: "site/signP",
+      getLocaList: "addText/getLocaList",
+    }),
+    //取消提醒
+    switch1Change(e) {
+      console.log("switch1 发生 change 事件，携带值为", e.mp.detail.value);
+      this.signP({
+        id: this.signDetailData.id,
+        remind: { remind: e.target.value ? 1 : -1 }
+      });
+    },
+    //电话
+    makePhone() {
+      wx.makePhoneCall({ phoneNumber: this.signDetailData.phone });
     },
     //放弃面试
-    interview(){
-       this.signP({id:this.signDetailData.id,status:1})
+    interview() {
+      wx.showModal({
+        title: "温馨提示", 
+        content: "确定要放弃本次面试吗?",
+        success: async res => {
+          if (res.confirm) {
+            await  this.signP({ id: this.signDetailData.id, status: 1 });
+          }
+          this.flag=false;
+        }
+      });
+      this.getLocaList({ status: -1 })
+      // this.signP({ id: this.signDetailData.id, status: 1 });
+    },
+    //去打卡
+    goSign() {
+      wx.navigateTo({ url: "/pages/sign/main" });
     }
   },
   created() {},
@@ -119,5 +139,7 @@ form {
     background: rgb(220, 78, 66);
     color: #fff;
   }
+ 
 }
+
 </style>

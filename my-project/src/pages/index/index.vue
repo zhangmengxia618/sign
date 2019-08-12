@@ -7,12 +7,17 @@
                 :markers="markers"
                 :longitude="longitude"
                 :latitude="latitude"
+                :reLocation="reLocation"
                ></map>
         </div>
         <cover-view class="location" @click="location">
             ◎
         </cover-view>
-        <navigator url="/pages/personage/main"> <span class="qDl">→</span></navigator>
+        <navigator url="/pages/personage/main"> 
+        <span class="qDl">
+            →
+            </span>
+            </navigator>
         <navigator url="/pages/addText/main">  
            <div class="add">添加面试</div>
         </navigator>
@@ -30,7 +35,9 @@ export default {
     },
     data(){
         return {
-             markers:[]
+             markers:[],
+             // 用户当前位置
+      reLocation: false,
         }
     },
     computed:{
@@ -76,7 +83,7 @@ export default {
      .qDl{
             position: fixed;
         bottom: 106rpx;
-        right: 12rpx;
+        right: 220rpx;
          display: flex;
          width: 100rpx;
          height: 100rpx;

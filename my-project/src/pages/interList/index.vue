@@ -20,17 +20,18 @@
           <div class="company">
             <h3>{{itemCon.company}}</h3>
             <span>{{status}}</span>
-            <!--  -->
+            <!-- {{item.remind?'未提醒':'已提醒'}} -->
           </div>
           <div class="address">{{itemCon.address}}</div>
           <div class="time">
             <p>面试时间:2019-08-06 17:00</p>
-            <span>{{remind}}</span>
+            <span>{{itemCon.remind?'未提醒':'已提醒'}}</span>
             <!--{{signDetailData.remind===-1?"未提醒":signDetailData.remind===0?"已提醒":"取消提醒"}}  -->
           </div>
         </div>
       </div>
     </div>
+    
   </div>
 </template>
 <script>
@@ -59,7 +60,8 @@ export default {
           status: 2
         }
       ],
-      num: 0
+      num: 0,
+      page:1
     };
   },
   computed: {
@@ -111,50 +113,58 @@ export default {
       });
     }
   },
+  //上拉加载
   onReachBottom() {
-    let page=1;
+    let page = 1;
     var that = this;
-
     wx.showLoading({
       title: "玩命加载中"
     });
-    page=page+1;
-    
+    page = page + 1;
+    console.log(page, "page++++++++++++++++++++");
     wx.request({
-      url: 'https://sign.jasonandjay.com/sign?page=' + page,
+      url: "https://sign.jasonandjay.com/sign?page=" + page,
       method: "GET",
       // 请求头部
       header: {
-        'content-type': 'application/text'
+        "content-type": "application/text"
       },
-      success: function (res) {
-        console.log(res,'res++',page)
-        console.log(res.data.data,'res.data')
-        console.log(that.addData,'this.addData')
-        that.addData=that.addData.concat(res.data.data)
-        console.log(that.addData,'(res.data.data)++++++++++')
-that.getLocaList({ page: page});
+      success: function(res) {
+        // console.log(res, "res++", page);
+        // console.log(res.data.data, "res.data");
+        // console.log(that.addData, "this.addData");
+        that.addData = that.addData.concat(res.data.data);
+        // console.log(that.addData, "(res.data.data)++++++++++");
+        that.getLocaList({ page: page });
         // 隐藏加载框
         wx.hideLoading();
       }
-    })
-    console.log("触底了")
+    });
+    console.log("触底了");
+  },
+  //下拉刷新
+  onPullDownRefresh() {
+    wx.stopPullDownRefresh();
+    // let page;
+    var that = this;
+    that.page =1;
+    that.getLocaList({ page: that.page });
+    console.log("下拉刷新");
   },
   created() {},
   mounted() {
     this.getLocaList({ status: -1 });
-    wx.startPullDownRefresh();
+    // wx.startPullDownRefresh();
   }
 };
 </script>
 <style scoped lang="scss">
 .inter {
   width: 100%;
-  // height: 100%;
   background: #ccc;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: scroll;
   ul {
     width: 100%;
     height: 80rpx;
@@ -175,7 +185,7 @@ that.getLocaList({ page: page});
     width: 100%;
     height: 100%;
     background: #fff;
-    overflow: hidden;
+    overflow: scroll;
     flex: 1;
     .cenZ {
       width: 100%;

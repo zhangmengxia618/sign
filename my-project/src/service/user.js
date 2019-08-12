@@ -30,3 +30,8 @@ export let signPut = code => {
   return fly.put(`/sign/${id}`,code);
 };
 
+//生物认证
+export let fingerPrint = code => {
+  return fly.post("/user/fingerPrint", code);
+};
+

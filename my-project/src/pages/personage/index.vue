@@ -31,7 +31,9 @@ export default {
     return {
       val: "",
       flag: true,
-      showFlag:false
+      showFlag: false,
+      //指纹
+      isfingerPrint: false
     };
   },
   computed: {
@@ -41,7 +43,8 @@ export default {
   },
   methods: {
     ...mapActions({
-      getPhoneNumberD: "user/getPhoneNumber"
+      getPhoneNumberD: "user/getPhoneNumber",
+      fingerPrintData: "user/fingerPrintData"
     }),
     getPhoneNumber(e) {
       let encryptedData = e.target.encryptedData; //加密数据
@@ -54,7 +57,7 @@ export default {
         this.flag = false;
       } else {
         this.flag = true;
-        this.showFlag=true;
+        this.showFlag = true;
         wx.openSetting({
           success(res) {
             console.log(res.authSetting);
@@ -68,7 +71,36 @@ export default {
       });
     }
   },
-  created() {},
+  //   onLoad: function(options) {
+  //     console.log(options);
+  //     var that = this;
+  // //   wx.startSoterAuthentication({
+  // //    requestAuthModes: ['fingerPrint'],
+  // //    challenge: '123456',
+  // //    authContent: '请用指纹解锁',
+  // //    success(res) {
+  // //     //  console.log(res,)
+  // //    }
+  // // })
+  //   },
+  created() {
+     let openid = wx.getStorageSync('openid');
+    console.log('openid.....',openid)
+    wx.startSoterAuthentication({
+      requestAuthModes: ["fingerPrint"],
+      challenge: "123456",
+      authContent: "请用指纹解锁",
+      success(res) {
+        console.log(res,'res+++15121')
+        //  console.log(res,)
+        this.fingerPrintData({
+          openid:openid,
+          json_string:res.resultJSON,
+          json_signature:res.resultJSONSignature
+        })
+      }
+    });
+  },
   mounted() {}
 };
 </script>

@@ -5,7 +5,8 @@
     "pages/interList/main",
     "pages/addText/main",
     "pages/site/main",
-    "pages/selectSite/main"
+    "pages/selectSite/main",
+    "pages/sign/main"
     
   ],
   "window": {
